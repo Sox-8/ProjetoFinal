@@ -1,0 +1,231 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Estilos personalizados do projeto (movidos de src/style.css) */
+
+:root {
+	--font-size: 16px;
+	--background: #FBF7F3; /* warm ivory */
+	--foreground: #2b2218; /* dark brown text */
+	--card: #FFFFFF;
+	--card-foreground: #2b2218;
+	--popover: #f5efe9;
+	--popover-foreground: #2b2218;
+	--primary: #8B4513; /* saddleBrown */
+	--primary-foreground: #ffffff;
+	--secondary: #C0843A; /* warm gold/brown */
+	--secondary-foreground: #2b2218;
+	--muted: #F3ECE6; /* light beige */
+	--muted-foreground: #6b5a4a;
+	--accent: #EDE3D9;
+	--accent-foreground: #2b2218;
+	--destructive: #b91c1c;
+	--destructive-foreground: #ffffff;
+	--border: rgba(43,34,24,0.08);
+	--input: transparent;
+	--input-background: #fffaf6;
+	--switch-background: #d9c6b0;
+	--font-weight-medium: 600;
+	--font-weight-normal: 400;
+	--ring: rgba(139,69,19,0.12);
+	--radius: 0.75rem;
+}
+
+.dark {
+	--background: #1f1a16;
+	--foreground: #efe7df;
+	--card: #2a221c;
+	--card-foreground: #efe7df;
+	--primary: #c07a3b;
+	--primary-foreground: #2a221c;
+	--border: rgba(255,255,255,0.06);
+	--input-background: #342b24;
+}
+
+/* Mapa de variáveis do tema (mantém compatibilidade sem @theme) */
+:root {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-border: var(--border);
+	--radius-lg: var(--radius);
+}
+
+@layer base {
+	body {
+		background-color: var(--background);
+		color: var(--foreground);
+		transition: color 300ms, background-color 300ms;
+		font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		line-height: 1.5;
+	}
+}
+
+/* Classes Customizadas para OrdemAds usando o Tema (sem @apply para evitar utilitários desconhecidos) */
+.card-juridico {
+	background-color: var(--card);
+	color: var(--card-foreground);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	box-shadow: 0 6px 18px rgba(43,34,24,0.06);
+	overflow: hidden;
+}
+
+.input-legal {
+	width: 100%;
+	padding: 0.9rem 1rem;
+	background-color: var(--input-background);
+	border: 1px solid var(--border);
+	border-radius: calc(var(--radius) - 0.25rem);
+	color: var(--foreground);
+	outline: none;
+	transition: box-shadow 180ms, border-color 180ms, transform 120ms;
+}
+.input-legal:focus {
+	box-shadow: 0 6px 18px var(--ring);
+	border-color: var(--primary);
+	transform: translateY(-1px);
+}
+
+.btn-primary-custom {
+	background-color: var(--primary);
+	color: var(--primary-foreground);
+	padding: 0.75rem 1.25rem;
+	border-radius: calc(var(--radius) - 0.25rem);
+	font-weight: var(--font-weight-medium);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	font-size: 0.95rem;
+	transition: box-shadow 150ms, transform 120ms, opacity 120ms;
+	box-shadow: 0 6px 18px rgba(139,69,19,0.12);
+	border: 1px solid rgba(0,0,0,0.04);
+}
+.btn-primary-custom:active { transform: translateY(1px) scale(0.995); box-shadow: 0 4px 12px rgba(139,69,19,0.08); }
+.btn-primary-custom:hover { opacity: 0.98; transform: translateY(-2px); }
+
+.menu-item-custom {
+	padding: 2rem;
+	background-color: var(--card);
+	border: 2px solid transparent;
+	border-radius: 1rem;
+	text-align: center;
+	transition: box-shadow 150ms, border-color 150ms;
+	cursor: pointer;
+}
+.menu-item-custom:hover { border-color: var(--primary); box-shadow: 0 8px 30px rgba(0,0,0,0.06); }
+
+/* Header styling to match screenshot */
+header {
+	background: var(--card);
+	border-bottom: 1px solid var(--border);
+	padding: 1.25rem 1.5rem;
+}
+
+header .logo-circle {
+	width: 44px;
+	height: 44px;
+	border-radius: 9999px;
+	background: var(--primary);
+	color: var(--primary-foreground);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin-right: 0.75rem;
+	box-shadow: 0 4px 12px rgba(43,34,24,0.08);
+}
+
+header h1 {
+	font-size: 1.125rem;
+	margin: 0;
+	font-weight: 700;
+}
+
+header p.sub {
+	margin: 0;
+	font-size: 0.75rem;
+	color: var(--muted-foreground);
+}
+
+/* Menu grid to replicate the four-card layout */
+.menu-grid {
+	display: grid;
+	grid-template-columns: repeat(1, minmax(0,1fr));
+	gap: 1.5rem;
+	max-width: 1100px;
+	margin: 0 auto;
+}
+@media (min-width: 768px) {
+	.menu-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (min-width: 1024px) {
+	.menu-grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
+}
+
+.menu-icon-wrapper {
+	width: 72px;
+	height: 72px;
+	border-radius: 9999px;
+	background: var(--primary);
+	color: var(--primary-foreground);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto 1rem;
+	box-shadow: 0 8px 20px rgba(43,34,24,0.08);
+}
+
+.title-premium {
+	display: block;
+	font-weight: 700;
+	margin-top: 0.5rem;
+	margin-bottom: 0.25rem;
+}
+
+/* Footer */
+footer.site-footer {
+	padding: 1.25rem 1.5rem;
+	border-top: 1px solid var(--border);
+	background: transparent;
+	color: var(--muted-foreground);
+	font-size: 0.875rem;
+}
+
+/* Center welcome area */
+.welcome-section {
+	text-align: center;
+	padding: 3.5rem 0 2.5rem;
+}
+
+.welcome-section h2 { font-size: 1.25rem; margin-bottom: 0.5rem; }
+.welcome-section p { color: var(--muted-foreground); margin-bottom: 2rem; }
+
+/* Navbar / Navigation theme integration */
+.site-nav {
+	background: color-mix(in srgb, var(--color-card) 96%, transparent);
+	color: var(--color-foreground);
+	border-bottom: 1px solid var(--color-border);
+}
+.site-nav .nav-inner { max-width: 1120px; margin: 0 auto; padding: 0.5rem 1rem; }
+.nav-link {
+	color: var(--color-muted-foreground);
+	padding: 0.5rem 0.75rem;
+	border-radius: 0.5rem;
+}
+.nav-link.active { background: color-mix(in srgb, var(--color-sidebar) 8%, transparent); color: var(--color-primary); }
+.nav-mobile-btn { color: var(--color-muted-foreground); padding: 0.5rem; border-radius: 0.5rem; }
+.nav-mobile-btn:hover, .nav-link:hover { background: color-mix(in srgb, var(--color-primary) 6%, transparent); color: var(--color-primary); }
+.nav-avatar { width: 36px; height: 36px; border-radius: 9999px; box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
+.nav-dropdown { background: var(--color-card); border: 1px solid var(--color-border); border-radius: calc(var(--radius-lg) - 4px); }
+.text-muted-foreground { color: var(--muted-foreground); }

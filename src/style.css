@@ -1,0 +1,475 @@
+:root {
+  /* Cores Institucionais */
+  --primary: #9a3412; /* Ajustado para o tom mais vibrante das imagens recentes */
+  --primary-foreground: #ffffff;
+  --background: #f9fafb; /* Fundo muito leve */
+  --card: #ffffff;
+  --border: #e5e7eb;
+  --text-main: #111827;
+  --text-muted: #6b7280;
+  --radius: 12px;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text-main);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- Layout Geral --- */
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* =========================================
+   1. MENU PRINCIPAL
+   ========================================= */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.menu-item-custom {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.menu-item-custom:hover {
+  border-color: var(--primary);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+}
+
+.menu-icon-wrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+/* =========================================
+   2. REGISTO DE CLIENTE
+   ========================================= */
+.container-registo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 2rem 1rem;
+}
+
+.card-registo-compacto {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 850px;
+  padding: 3.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+/* Uploader de Foto Circular */
+.photo-upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.photo-dashed-circle {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 2px dashed #d1d5db;
+  background-color: #fafafa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.photo-dashed-circle:hover {
+  border-color: var(--primary);
+  background-color: #fff7ed;
+  color: var(--primary);
+}
+
+.avatar-img-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.btn-upload-trigger {
+  background: white;
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-upload-trigger:hover {
+  background: #f9fafb;
+}
+
+.btn-registo-final {
+  background-color: var(--primary);
+  color: white;
+  padding: 0.9rem;
+  border-radius: 8px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-cancelar-light {
+  background: white;
+  border: 1px solid var(--border);
+  color: #374151;
+  padding: 0.9rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* =========================================
+   3. ESTILOS GERAIS (Botões, Inputs, etc)
+   ========================================= */
+.form-section {
+  border-top: 1px solid var(--border);
+  padding-top: 2rem;
+  margin-top: 2rem;
+}
+
+.form-section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--text-main);
+}
+
+.form-grid-3 {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.input-label-required {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.input-label-required::after {
+  content: " *";
+  color: #dc2626;
+}
+
+.input-legal {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background: #ffffff;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.input-legal:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+/* =========================================
+   4. ANIMAÇÕES
+   ========================================= */
+.animate-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.zoom-in-95 {
+  animation: zoomIn 0.3s ease-out forwards;
+}
+
+@keyframes zoomIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* =========================================
+   5. PESQUISA E ARQUIVO DIGITAL (LAYOUT SPLIT)
+   ========================================= */
+
+/* Grelha Principal: Coluna Esquerda (380px) + Coluna Direita (Resto) */
+.search-page-grid {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* Estilo Genérico dos Painéis (Branco com Sombra Suave) */
+.panel-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  min-height: 650px; /* Altura fixa para alinhamento */
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- PAINEL ESQUERDO: CONTROLO --- */
+.search-header-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.icon-circle-brown {
+  width: 48px;
+  height: 48px;
+  background-color: var(--primary);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.search-type-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.search-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.option-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.option-card:hover {
+  background-color: #f9fafb;
+}
+
+/* Estado Ativo (Selecionado) */
+.option-card.active {
+  border: 2px solid var(--primary);
+  background-color: #fff7ed;
+}
+
+.option-icon {
+  color: var(--primary);
+  font-size: 1.25rem;
+}
+
+/* Botões de Ação */
+.btn-search-submit {
+  background-color: #9a3412; /* Tom mais escuro para o botão */
+  color: white;
+  width: 100%;
+  padding: 0.9rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 0.75rem;
+  transition: opacity 0.2s;
+}
+
+.btn-search-submit:hover {
+  opacity: 0.9;
+}
+
+.btn-clear-outline {
+  background-color: white;
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  width: 100%;
+  padding: 0.9rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-clear-outline:hover {
+  background-color: #f9fafb;
+}
+
+/* --- PAINEL DIREITO: ESTADO VAZIO --- */
+.empty-state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.empty-icon-circle {
+  width: 90px;
+  height: 90px;
+  background-color: #f3f4f6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  color: #9ca3af;
+}
+
+/* =========================================
+   6. DETALHES DO CLIENTE (NOVO LAYOUT)
+   ========================================= */
+
+/* Cabeçalho com Ícone Castanho Grande */
+.details-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.icon-user-large {
+  width: 72px;
+  height: 72px;
+  background-color: var(--primary);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Grelha de Informação (2 colunas) */
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-label {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+}
+
+.detail-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111827;
+  word-break: break-all;
+}
+
+/* Linhas Separadoras */
+.divider-line {
+  height: 1px;
+  background-color: #f3f4f6;
+  width: 100%;
+  margin: 2rem 0;
+}
+
+/* Botão de Ação "Ver Processos" */
+.btn-view-processes {
+  background-color: var(--primary);
+  color: white;
+  padding: 0.9rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  display: inline-block;
+}
+
+.btn-view-processes:hover {
+  opacity: 0.9;
+}
+
+/* Ajuste Responsivo */
+@media (max-width: 900px) {
+  .search-page-grid {
+    grid-template-columns: 1fr;
+  }
+}
