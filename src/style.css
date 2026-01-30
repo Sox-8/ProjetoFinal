@@ -169,7 +169,7 @@
 }
 
 /* =========================================
-   3. REGISTO DE CLIENTE (O código que enviaste)
+   3. REGISTO DE CLIENTE (PASSO 1)
    ========================================= */
 .register-container {
   display: flex;
@@ -444,3 +444,129 @@
 }
 
 .process-card-mini:hover { border-color: #9a3412; }
+
+
+/* =========================================
+   5. FORMULÁRIO DETALHADO (Passo 2 - Dados do Cliente)
+   ========================================= */
+
+/* Cartão mais largo para o formulário final (sobrescreve o default) */
+.register-card.wide {
+  max-width: 900px;
+  padding: 3rem;
+  text-align: left; /* Alinhamento dos textos à esquerda */
+}
+
+/* Layout do Topo do Form: Título à esquerda, Foto à direita */
+.form-header-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Bloco da Foto (Direita) */
+.photo-upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.photo-placeholder {
+  width: 6rem;
+  height: 6rem;
+  border: 2px dashed #d1d5db;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  background-color: #f9fafb;
+  margin-bottom: 0.5rem;
+}
+
+.btn-small-outline {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid #d1d5db;
+  background: white;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+}
+
+/* Títulos das Secções (Identificação, Contactos...) */
+.form-section-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 1rem;
+  margin-top: 2rem;
+}
+
+/* Sistema de Grelha para Inputs (1 ou 2 colunas) */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr 1fr; /* 2 Colunas em ecrãs grandes */
+  }
+}
+
+/* Classe utilitária para inputs que ocupam a largura total */
+.col-span-2 {
+  grid-column: span 1;
+}
+
+@media (min-width: 768px) {
+  .col-span-2 {
+    grid-column: span 2;
+  }
+}
+
+/* Linha de Botões (Cancelar e Registar) */
+.form-actions-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btn-cancel {
+  flex: 1;
+  padding: 0.875rem;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+/* Garante que a imagem preenche o círculo perfeitamente */
+.photo-placeholder {
+  overflow: hidden; /* Corta o que sair fora do círculo */
+  position: relative;
+}
+
+.photo-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Mantém a proporção da foto sem esticar */
+  border-radius: 50%;
+}

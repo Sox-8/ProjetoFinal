@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, UserPlus, Scale, AlertCircle, Save, CheckCircle } from 'lucide-react';
+import { ArrowLeft, UserPlus, Scale, AlertCircle, Save, CheckCircle, Upload } from 'lucide-react';
 import { db } from '../firebase';
 import { collection, addDoc, Timestamp, query, where, getDocs } from 'firebase/firestore';
 import '../style.css'; 
@@ -18,12 +18,19 @@ export const RegistoCliente: React.FC<Props> = ({ setEcra }) => {
   const [loadingVerificacao, setLoadingVerificacao] = useState(false);
   const [erroVerificacao, setErroVerificacao] = useState('');
 
-  // Estado Passo 2 (Formulário)
+  // Estado Passo 2 (Formulário Detalhado)
   const [nome, setNome] = useState('');
   const [nif, setNif] = useState('');
+  const [dataNascimento, setDataNascimento] = useState(''); // NOVO
+  const [nacionalidade, setNacionalidade] = useState('Portuguesa'); // NOVO
+  
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
+  
   const [morada, setMorada] = useState('');
+  const [codPostal, setCodPostal] = useState(''); // NOVO
+  const [cidade, setCidade] = useState(''); // NOVO
+
   const [loadingGuardar, setLoadingGuardar] = useState(false);
 
   // --- FUNÇÕES ---
@@ -62,9 +69,13 @@ export const RegistoCliente: React.FC<Props> = ({ setEcra }) => {
       await addDoc(collection(db, "clientes"), {
         nome,
         nif,
+        dataNascimento,
+        nacionalidade,
         email,
         telefone,
         morada,
+        codPostal,
+        cidade,
         dataRegisto: Timestamp.now()
       });
       alert("Cliente registado com sucesso!");
@@ -77,11 +88,10 @@ export const RegistoCliente: React.FC<Props> = ({ setEcra }) => {
   };
 
   // --- RENDERIZAÇÃO ---
-
   return (
     <div className="page-container">
       
-      {/* HEADER (Igual à imagem: Logo à esquerda, Voltar à direita) */}
+      {/* HEADER */}
       <header className="header-bar with-action">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <div className="logo-circle">
@@ -92,22 +102,18 @@ export const RegistoCliente: React.FC<Props> = ({ setEcra }) => {
                 <p>Sistema de Gestão de Processos</p>
             </div>
         </div>
-        
-        {/* Botão Voltar */}
         <button onClick={() => setEcra('menu')} className="btn-back">
             <ArrowLeft size={16} /> Voltar
         </button>
       </header>
 
-      {/* PASSO 1: VERIFICAÇÃO NIF (Design da Imagem) */}
+      {/* PASSO 1: VERIFICAÇÃO NIF (Mantido igual) */}
       {etapa === 'verificacao' && (
         <div className="register-container">
             <div className="register-card">
-                
                 <div className="icon-user-register">
                     <UserPlus size={32} />
                 </div>
-
                 <h2 className="register-title">Registar Novo Cliente</h2>
                 <p className="register-subtitle">
                     Insira o número de identificação fiscal para verificar se o cliente já está registado
@@ -117,22 +123,14 @@ export const RegistoCliente: React.FC<Props> = ({ setEcra }) => {
                     <div className="form-group">
                         <label className="form-label">Número de Identificação Fiscal (NIF)</label>
                         <input 
-                            type="text" 
-                            className="form-input"
-                            placeholder="123456789"
-                            maxLength={9}
-                            value={nifVerificacao}
-                            onChange={(e) => setNifVerificacao(e.target.value)}
+                            type="text" className="form-input"
+                            placeholder="123456789" maxLength={9}
+                            value={nifVerificacao} onChange={(e) => setNifVerificacao(e.target.value)}
                         />
-                        <p className="input-helper">O NIF deve ter 9 dígitos</p>
                     </div>
-
                     {erroVerificacao && (
-                        <div className="error-message">
-                            <AlertCircle size={16} /> {erroVerificacao}
-                        </div>
+                        <div className="error-message"><AlertCircle size={16} /> {erroVerificacao}</div>
                     )}
-
                     <button type="submit" className="btn-primary-full" disabled={loadingVerificacao}>
                         {loadingVerificacao ? "A verificar..." : "Verificar e Continuar"}
                     </button>
@@ -141,77 +139,139 @@ export const RegistoCliente: React.FC<Props> = ({ setEcra }) => {
                 <div className="info-box">
                     <h4 className="info-title">Informação</h4>
                     <p className="info-text">
-                        Se o número de identificação fiscal já existir no sistema, não será possível criar um novo registo. Cada cliente só pode ser registado uma vez.
+                        Se o número de identificação fiscal já existir no sistema, não será possível criar um novo registo.
                     </p>
                 </div>
-
             </div>
         </div>
       )}
 
-      {/* PASSO 2: FORMULÁRIO FINAL (Mantendo o estilo limpo) */}
+      {/* PASSO 2: FORMULÁRIO DETALHADO (Novo Layout) */}
       {etapa === 'formulario' && (
         <div className="register-container">
-            <div className="register-card" style={{ maxWidth: '800px', textAlign: 'left' }}>
+            {/* Usa a classe 'wide' para ficar mais largo como na imagem */}
+            <div className="register-card wide">
                 
-                <div className="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
-                    <div className="icon-user-register" style={{ margin: 0, width: '3rem', height: '3rem' }}>
-                        <UserPlus size={20} />
-                    </div>
-                    <div>
-                        <h2 className="register-title" style={{ fontSize: '1.25rem', marginBottom: 0 }}>Ficha de Cliente</h2>
-                        <div className="flex items-center gap-2 text-green-600 text-sm mt-1">
-                            <CheckCircle size={14} /> NIF {nif} validado
+                <form onSubmit={guardar}>
+                    {/* TOPO: Ícone, Título e Foto */}
+                    <div className="form-header-layout">
+                        <div className="flex gap-4">
+                            <div className="icon-user-register" style={{ margin: 0 }}>
+                                <UserPlus size={24} />
+                            </div>
+                            <div>
+                                <h2 className="text-xl font-bold text-gray-900">Dados do Cliente</h2>
+                                <p className="text-sm text-gray-500">Preencha todos os campos para completar o registo</p>
+                            </div>
+                        </div>
+
+                        {/* Área de Upload de Foto (Visual apenas) */}
+                        <div className="photo-upload-container">
+                            <div className="photo-placeholder">
+                                <Upload size={24} />
+                            </div>
+                            <button type="button" className="btn-small-outline">Adicionar Foto</button>
+                            <span className="text-[10px] text-gray-400">Opcional</span>
                         </div>
                     </div>
-                </div>
 
-                <form onSubmit={guardar} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="col-span-2">
-                        <label className="form-label">Nome Completo</label>
-                        <input 
-                            type="text" className="form-input" required
-                            value={nome} onChange={e => setNome(e.target.value)}
-                        />
-                    </div>
-                    
-                    <div>
-                        <label className="form-label">Email</label>
-                        <input 
-                            type="email" className="form-input"
-                            value={email} onChange={e => setEmail(e.target.value)}
-                        />
+                    {/* SECÇÃO 1: IDENTIFICAÇÃO */}
+                    <h3 className="form-section-title">Identificação</h3>
+                    <div className="form-grid">
+                        <div className="col-span-2">
+                            <label className="form-label">Nome Completo *</label>
+                            <input 
+                                type="text" className="form-input" required
+                                value={nome} onChange={e => setNome(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <label className="form-label">NIF *</label>
+                            <input 
+                                type="text" className="form-input bg-gray-100 text-gray-500" readOnly
+                                value={nif} 
+                            />
+                        </div>
+                        <div>
+                            <label className="form-label">Data de Nascimento</label>
+                            <input 
+                                type="date" className="form-input"
+                                value={dataNascimento} onChange={e => setDataNascimento(e.target.value)}
+                            />
+                        </div>
+                        <div className="col-span-2">
+                            <label className="form-label">Nacionalidade</label>
+                            <input 
+                                type="text" className="form-input"
+                                value={nacionalidade} onChange={e => setNacionalidade(e.target.value)}
+                            />
+                        </div>
                     </div>
 
-                    <div>
-                        <label className="form-label">Telefone</label>
-                        <input 
-                            type="tel" className="form-input"
-                            value={telefone} onChange={e => setTelefone(e.target.value)}
-                        />
+                    {/* SECÇÃO 2: CONTACTOS */}
+                    <h3 className="form-section-title">Contactos</h3>
+                    <div className="form-grid">
+                        <div>
+                            <label className="form-label">Email *</label>
+                            <input 
+                                type="email" className="form-input" required
+                                value={email} onChange={e => setEmail(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <label className="form-label">Telefone *</label>
+                            <input 
+                                type="tel" className="form-input" required
+                                value={telefone} onChange={e => setTelefone(e.target.value)}
+                            />
+                        </div>
                     </div>
 
-                    <div className="col-span-2">
-                        <label className="form-label">Morada / Localidade</label>
-                        <input 
-                            type="text" className="form-input"
-                            value={morada} onChange={e => setMorada(e.target.value)}
-                        />
+                    {/* SECÇÃO 3: MORADA */}
+                    <h3 className="form-section-title">Morada</h3>
+                    <div className="form-grid">
+                        <div className="col-span-2">
+                            <label className="form-label">Endereço *</label>
+                            <input 
+                                type="text" className="form-input" placeholder="Rua, nº, andar..." required
+                                value={morada} onChange={e => setMorada(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <label className="form-label">Código Postal</label>
+                            <input 
+                                type="text" className="form-input" placeholder="0000-000"
+                                value={codPostal} onChange={e => setCodPostal(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <label className="form-label">Cidade</label>
+                            <input 
+                                type="text" className="form-input"
+                                value={cidade} onChange={e => setCidade(e.target.value)}
+                            />
+                        </div>
                     </div>
 
-                    <div className="col-span-2 flex gap-4 mt-4">
+                    {/* BOTÕES DE AÇÃO */}
+                    <div className="form-actions-row">
                         <button 
                             type="button" 
                             onClick={() => setEtapa('verificacao')}
-                            className="btn-primary-full"
-                            style={{ backgroundColor: 'white', color: '#374151', border: '1px solid #d1d5db' }}
+                            className="btn-cancel"
                         >
                             Cancelar
                         </button>
-                        <button type="submit" className="btn-primary-full" disabled={loadingGuardar}>
-                            {loadingGuardar ? "A gravar..." : "Gravar Ficha"}
+                        <button 
+                            type="submit" 
+                            disabled={loadingGuardar}
+                            className="btn-primary-full" 
+                            style={{ flex: 1, marginTop: 0 }} // Ajuste para ficar lado a lado
+                        >
+                            {loadingGuardar ? "A gravar..." : "Registar Cliente"}
                         </button>
                     </div>
+
                 </form>
             </div>
         </div>
