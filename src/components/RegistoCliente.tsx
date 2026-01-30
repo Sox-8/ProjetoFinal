@@ -1,152 +1,222 @@
-import React, { useState, useRef } from 'react';
-import { UserPlus, Upload } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowLeft, UserPlus, Scale, AlertCircle, Save, CheckCircle } from 'lucide-react';
 import { db } from '../firebase';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, Timestamp, query, where, getDocs } from 'firebase/firestore';
+import '../style.css'; 
 
 interface Props {
-  setTela: (t: string) => void;
+  setEcra: (ecra: string) => void;
+  clienteInicial?: any;
 }
 
-export const RegistoCliente: React.FC<Props> = ({ setTela }) => {
-  const [formData, setFormData] = useState({
-    nome: '', nif: '', dataNasc: '', nacionalidade: 'Portuguesa',
-    email: '', telefone: '', endereco: '', cp: '', cidade: ''
-  });
+export const RegistoCliente: React.FC<Props> = ({ setEcra }) => {
+  // --- ESTADOS ---
+  const [etapa, setEtapa] = useState<'verificacao' | 'formulario'>('verificacao');
+  
+  // Estado Passo 1 (Verificação)
+  const [nifVerificacao, setNifVerificacao] = useState('');
+  const [loadingVerificacao, setLoadingVerificacao] = useState(false);
+  const [erroVerificacao, setErroVerificacao] = useState('');
 
-  const [loading, setLoading] = useState(false);
-  const [fotoPreview, setFotoPreview] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  // Estado Passo 2 (Formulário)
+  const [nome, setNome] = useState('');
+  const [nif, setNif] = useState('');
+  const [email, setEmail] = useState('');
+  const [telefone, setTelefone] = useState('');
+  const [morada, setMorada] = useState('');
+  const [loadingGuardar, setLoadingGuardar] = useState(false);
 
-  // Função chamada ao escolher um ficheiro
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFotoPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const abrirSeletor = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleSalvar = async (e: React.FormEvent) => {
+  // --- FUNÇÕES ---
+  const verificarNif = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.nome) return alert("O Nome Completo é obrigatório.");
-    
-    setLoading(true);
+    if (!nifVerificacao || nifVerificacao.length !== 9) {
+      setErroVerificacao("O NIF deve ter exatamente 9 dígitos.");
+      return;
+    }
+
+    setLoadingVerificacao(true);
+    setErroVerificacao('');
+
+    try {
+      const q = query(collection(db, "clientes"), where("nif", "==", nifVerificacao));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        setErroVerificacao("Erro: Este NIF já se encontra registado no sistema.");
+      } else {
+        setNif(nifVerificacao);
+        setEtapa('formulario');
+      }
+    } catch (error) {
+      console.error(error);
+      setErroVerificacao("Erro de conexão ao verificar NIF.");
+    }
+    setLoadingVerificacao(false);
+  };
+
+  const guardar = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoadingGuardar(true);
 
     try {
       await addDoc(collection(db, "clientes"), {
-        ...formData,
-        fotoPreview: fotoPreview,
-        dataRegisto: new Date()
+        nome,
+        nif,
+        email,
+        telefone,
+        morada,
+        dataRegisto: Timestamp.now()
       });
-
-      alert("Cliente registado com sucesso.");
-      setTela('menu');
-
-    } catch (erro: any) {
-      console.error("Erro Firebase:", erro);
-      alert("Erro ao guardar: " + erro.message);
+      alert("Cliente registado com sucesso!");
+      setEcra('procurar');
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao gravar dados.");
     }
-
-    setLoading(false);
+    setLoadingGuardar(false);
   };
 
+  // --- RENDERIZAÇÃO ---
+
   return (
-    <div className="container-registo animate-in fade-in">
-      <div className="card-registo-compacto">
-        
-        {/* Input Invisível para o ficheiro */}
-        <input 
-          type="file" 
-          ref={fileInputRef} 
-          onChange={handleFileChange} 
-          accept="image/*" 
-          style={{ display: 'none' }} 
-        />
-
-        {/* Cabeçalho */}
-        <div className="flex justify-between items-start mb-10">
-          <div className="flex gap-4">
-            <div className="menu-icon-wrapper" style={{ margin: 0, width: 52, height: 52, backgroundColor: '#8b4513' }}>
-              <UserPlus size={24} color="white" />
+    <div className="page-container">
+      
+      {/* HEADER (Igual à imagem: Logo à esquerda, Voltar à direita) */}
+      <header className="header-bar with-action">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div className="logo-circle">
+                <Scale size={24} />
             </div>
-            <div>
-              <h2 className="text-xl font-bold m-0" style={{ color: '#111' }}>Dados do Cliente</h2>
-              <p className="text-sm text-muted-foreground m-0">Novo registo de constituinte</p>
+            <div className="header-title">
+                <h1>Ordem dos Advogados</h1>
+                <p>Sistema de Gestão de Processos</p>
             </div>
-          </div>
-
-          {/* Área de Upload */}
-          <div className="photo-upload-container">
-            <div className="photo-dashed-circle" onClick={abrirSeletor}>
-              {fotoPreview ? (
-                <img src={fotoPreview} alt="Preview" className="avatar-img-cover" />
-              ) : (
-                <Upload size={32} strokeWidth={1.5} />
-              )}
-            </div>
-            <button type="button" onClick={abrirSeletor} className="btn-upload-trigger">
-              <Upload size={16} /> Adicionar Foto
-            </button>
-            <span className="text-[10px] text-gray-400 uppercase tracking-wide font-bold mt-1">Opcional</span>
-          </div>
         </div>
+        
+        {/* Botão Voltar */}
+        <button onClick={() => setEcra('menu')} className="btn-back">
+            <ArrowLeft size={16} /> Voltar
+        </button>
+      </header>
 
-        <form onSubmit={handleSalvar} className="space-y-8">
-          
-          {/* Identificação */}
-          <div className="form-section border-none mt-0 pt-0">
-            <h3 className="form-section-title">Identificação</h3>
-            <div className="space-y-5">
-              <div className="input-group">
-                <label className="input-label-required">Nome Completo</label>
-                <input required className="input-legal" value={formData.nome} onChange={e => setFormData({...formData, nome: e.target.value})} />
-              </div>
-              <div className="form-grid-3">
-                <div className="input-group"><label className="input-label-required">NIF</label><input required className="input-legal" maxLength={9} value={formData.nif} onChange={e => setFormData({...formData, nif: e.target.value})} /></div>
-                <div className="input-group"><label className="input-label-required">Data de Nascimento</label><input type="date" className="input-legal" onChange={e => setFormData({...formData, dataNasc: e.target.value})} /></div>
-                <div className="input-group"><label className="input-label-required">Nacionalidade</label><input className="input-legal" value={formData.nacionalidade} onChange={e => setFormData({...formData, nacionalidade: e.target.value})} /></div>
-              </div>
+      {/* PASSO 1: VERIFICAÇÃO NIF (Design da Imagem) */}
+      {etapa === 'verificacao' && (
+        <div className="register-container">
+            <div className="register-card">
+                
+                <div className="icon-user-register">
+                    <UserPlus size={32} />
+                </div>
+
+                <h2 className="register-title">Registar Novo Cliente</h2>
+                <p className="register-subtitle">
+                    Insira o número de identificação fiscal para verificar se o cliente já está registado
+                </p>
+
+                <form onSubmit={verificarNif}>
+                    <div className="form-group">
+                        <label className="form-label">Número de Identificação Fiscal (NIF)</label>
+                        <input 
+                            type="text" 
+                            className="form-input"
+                            placeholder="123456789"
+                            maxLength={9}
+                            value={nifVerificacao}
+                            onChange={(e) => setNifVerificacao(e.target.value)}
+                        />
+                        <p className="input-helper">O NIF deve ter 9 dígitos</p>
+                    </div>
+
+                    {erroVerificacao && (
+                        <div className="error-message">
+                            <AlertCircle size={16} /> {erroVerificacao}
+                        </div>
+                    )}
+
+                    <button type="submit" className="btn-primary-full" disabled={loadingVerificacao}>
+                        {loadingVerificacao ? "A verificar..." : "Verificar e Continuar"}
+                    </button>
+                </form>
+
+                <div className="info-box">
+                    <h4 className="info-title">Informação</h4>
+                    <p className="info-text">
+                        Se o número de identificação fiscal já existir no sistema, não será possível criar um novo registo. Cada cliente só pode ser registado uma vez.
+                    </p>
+                </div>
+
             </div>
-          </div>
+        </div>
+      )}
 
-          {/* Contactos */}
-          <div className="form-section">
-            <h3 className="form-section-title">Contactos</h3>
-            <div className="form-grid-2">
-              <div className="input-group"><label className="input-label-required">Email</label><input type="email" className="input-legal" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} /></div>
-              <div className="input-group"><label className="input-label-required">Telefone</label><input className="input-legal" value={formData.telefone} onChange={e => setFormData({...formData, telefone: e.target.value})} /></div>
+      {/* PASSO 2: FORMULÁRIO FINAL (Mantendo o estilo limpo) */}
+      {etapa === 'formulario' && (
+        <div className="register-container">
+            <div className="register-card" style={{ maxWidth: '800px', textAlign: 'left' }}>
+                
+                <div className="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
+                    <div className="icon-user-register" style={{ margin: 0, width: '3rem', height: '3rem' }}>
+                        <UserPlus size={20} />
+                    </div>
+                    <div>
+                        <h2 className="register-title" style={{ fontSize: '1.25rem', marginBottom: 0 }}>Ficha de Cliente</h2>
+                        <div className="flex items-center gap-2 text-green-600 text-sm mt-1">
+                            <CheckCircle size={14} /> NIF {nif} validado
+                        </div>
+                    </div>
+                </div>
+
+                <form onSubmit={guardar} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="col-span-2">
+                        <label className="form-label">Nome Completo</label>
+                        <input 
+                            type="text" className="form-input" required
+                            value={nome} onChange={e => setNome(e.target.value)}
+                        />
+                    </div>
+                    
+                    <div>
+                        <label className="form-label">Email</label>
+                        <input 
+                            type="email" className="form-input"
+                            value={email} onChange={e => setEmail(e.target.value)}
+                        />
+                    </div>
+
+                    <div>
+                        <label className="form-label">Telefone</label>
+                        <input 
+                            type="tel" className="form-input"
+                            value={telefone} onChange={e => setTelefone(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="col-span-2">
+                        <label className="form-label">Morada / Localidade</label>
+                        <input 
+                            type="text" className="form-input"
+                            value={morada} onChange={e => setMorada(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="col-span-2 flex gap-4 mt-4">
+                        <button 
+                            type="button" 
+                            onClick={() => setEtapa('verificacao')}
+                            className="btn-primary-full"
+                            style={{ backgroundColor: 'white', color: '#374151', border: '1px solid #d1d5db' }}
+                        >
+                            Cancelar
+                        </button>
+                        <button type="submit" className="btn-primary-full" disabled={loadingGuardar}>
+                            {loadingGuardar ? "A gravar..." : "Gravar Ficha"}
+                        </button>
+                    </div>
+                </form>
             </div>
-          </div>
+        </div>
+      )}
 
-          {/* Morada */}
-          <div className="form-section">
-            <h3 className="form-section-title">Morada</h3>
-            <div className="space-y-5">
-              <div className="input-group"><label className="input-label-required">Endereço</label><input className="input-legal" value={formData.endereco} onChange={e => setFormData({...formData, endereco: e.target.value})} /></div>
-              <div className="form-grid-2">
-                <div className="input-group"><label className="input-label-required">Código Postal</label><input className="input-legal" value={formData.cp} onChange={e => setFormData({...formData, cp: e.target.value})} /></div>
-                <div className="input-group"><label className="input-label-required">Cidade</label><input className="input-legal" value={formData.cidade} onChange={e => setFormData({...formData, cidade: e.target.value})} /></div>
-              </div>
-            </div>
-          </div>
-
-          {/* Botões */}
-          <div className="flex gap-4 mt-10">
-            <button type="button" onClick={() => setTela('menu')} className="btn-cancelar-light flex-1">Cancelar</button>
-            <button type="submit" disabled={loading} className="btn-registo-final flex-1">
-                {loading ? "A guardar..." : "Registar Cliente"}
-            </button>
-          </div>
-        </form>
-      </div>
     </div>
   );
 };

@@ -1,55 +1,83 @@
 import React from 'react';
-import { UserPlus, Search, Folder, FolderCheck } from 'lucide-react';
+import { Scale, Search, UserPlus, FolderOpen, FolderCheck, LogOut } from 'lucide-react';
+import '../style.css'; // Garante que o estilo é carregado
 
 interface Props {
-  setTela: (t: string) => void;
+  setEcra: (ecra: string) => void;
 }
 
-export const MenuPrincipal: React.FC<Props> = ({ setTela }) => {
+export const MenuPrincipal: React.FC<Props> = ({ setEcra }) => {
   return (
-    <div className="text-center animate-in fade-in duration-700 py-10">
-      <h2 className="text-2xl font-bold mb-2 text-[#3f2e22]">Bem-vindo</h2>
-      <p className="text-muted-foreground mb-12">Selecione uma opção para continuar</p>
+    <div className="page-container">
       
-      <div className="menu-grid">
+      {/* HEADER: Logótipo e Título à esquerda */}
+      <header className="header-bar">
+        <div className="logo-circle">
+          <Scale size={24} />
+        </div>
+        <div className="header-title">
+          <h1>Ordem dos Advogados</h1>
+          <p>Sistema de Gestão de Processos</p>
+        </div>
+      </header>
+
+      {/* CONTEÚDO CENTRAL: Bem-vindo e Cartões */}
+      <main className="main-content">
         
-        {/* 1. REGISTAR CLIENTE */}
-        <div className="menu-item-custom group" onClick={() => setTela('registo')}>
-          <div className="menu-icon-wrapper group-hover:scale-110 transition-transform">
-            <UserPlus size={30} />
-          </div>
-          <h3 className="font-bold text-gray-900 mt-4">Registar Cliente</h3>
-          <p className="text-sm text-muted-foreground mt-2">Adicione um novo cliente ao sistema</p>
+        <div className="welcome-text">
+          <h2>Bem-vindo</h2>
+          <p>Selecione uma opção para continuar</p>
         </div>
 
-        {/* 2. PROCURAR CLIENTE */}
-        <div className="menu-item-custom group" onClick={() => setTela('procurar')}>
-          <div className="menu-icon-wrapper group-hover:scale-110 transition-transform">
-            <Search size={30} />
-          </div>
-          <h3 className="font-bold text-gray-900 mt-4">Procurar Cliente</h3>
-          <p className="text-sm text-muted-foreground mt-2">Pesquise clientes registados</p>
-        </div>
+        <div className="menu-grid">
+          
+          {/* BOTÃO 1: REGISTAR */}
+          <button onClick={() => setEcra('novo-caso')} className="menu-card">
+            {/* Esta div 'card-icon' é que faz a bola castanha! */}
+            <div className="card-icon">
+              <UserPlus size={32} />
+            </div>
+            <h3>Registar Cliente</h3>
+            <p>Adicione um novo cliente ao sistema</p>
+          </button>
 
-        {/* 3. PROCESSOS A DECORRER */}
-        <div className="menu-item-custom group" onClick={() => setTela('decorrer')}>
-          <div className="menu-icon-wrapper group-hover:scale-110 transition-transform">
-            <Folder size={30} />
-          </div>
-          <h3 className="font-bold text-gray-900 mt-4">Processos a Decorrer</h3>
-          <p className="text-sm text-muted-foreground mt-2">Consulte processos ativos</p>
-        </div>
+          {/* BOTÃO 2: PROCURAR */}
+          <button onClick={() => setEcra('procurar')} className="menu-card">
+            <div className="card-icon">
+              <Search size={32} />
+            </div>
+            <h3>Procurar Cliente</h3>
+            <p>Pesquise clientes registados</p>
+          </button>
 
-        {/* 4. PROCESSOS FECHADOS (DESBLOQUEADO) */}
-        <div className="menu-item-custom group" onClick={() => setTela('arquivo')}>
-          <div className="menu-icon-wrapper group-hover:scale-110 transition-transform bg-gray-700">
-            <FolderCheck size={30} />
-          </div>
-          <h3 className="font-bold text-gray-900 mt-4">Processos Fechados</h3>
-          <p className="text-sm text-muted-foreground mt-2">Aceda ao arquivo de processos</p>
-        </div>
+          {/* BOTÃO 3: DECORRER */}
+          <button onClick={() => setEcra('decorrer')} className="menu-card">
+            <div className="card-icon">
+              <FolderOpen size={32} />
+            </div>
+            <h3>Processos a Decorrer</h3>
+            <p>Consulte processos ativos</p>
+          </button>
 
-      </div>
+          {/* BOTÃO 4: FECHADOS */}
+          <button onClick={() => setEcra('arquivados')} className="menu-card">
+            <div className="card-icon">
+              <FolderCheck size={32} />
+            </div>
+            <h3>Processos Fechados</h3>
+            <p>Aceda ao arquivo de processos</p>
+          </button>
+
+        </div>
+      </main>
+
+      {/* FOOTER: Rodapé alinhado */}
+      <footer className="footer-bar">
+        <span>© 2026 Ordem dos Advogados</span>
+        <button className="btn-logout">
+          Terminar Sessão <LogOut size={14} />
+        </button>
+      </footer>
     </div>
   );
 };
