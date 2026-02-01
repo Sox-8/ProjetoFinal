@@ -3,6 +3,7 @@ import { MenuPrincipal } from './components/MenuPrincipal';
 import { ProcurarCliente } from './components/ProcurarCliente';
 import { RegistoCliente } from './components/RegistoCliente';
 import { DetalhesProcesso } from './components/DetalhesProcesso';
+import { FichaCliente } from './components/FichaCliente';
 
 function App() {
   const [ecra, setEcra] = useState('menu'); 
@@ -18,6 +19,11 @@ function App() {
   const irParaEditar = (cliente: any) => {
     setClienteSelecionado(cliente);
     setEcra('editar-cliente'); 
+  };
+
+  const verFichaCliente = (cliente: any) => {
+    setClienteSelecionado(cliente);
+    setEcra('ficha-cliente'); 
   };
 
   const verDetalhes = (processo: any) => {
@@ -36,7 +42,8 @@ function App() {
         <ProcurarCliente 
           setEcra={setEcra} 
           onNovoCaso={irParaNovoCaso}
-          onEditarCliente={irParaEditar}
+          // REMOVI A LINHA onEditarCliente={irParaEditar} QUE DAVA ERRO
+          onConsultarFicha={verFichaCliente} 
           onVerProcesso={verDetalhes}
         />
       )}
@@ -45,6 +52,13 @@ function App() {
         <RegistoCliente 
           setEcra={setEcra} 
           clienteInicial={clienteSelecionado}
+        />
+      )}
+
+      {ecra === 'ficha-cliente' && (
+        <FichaCliente 
+          setEcra={setEcra}
+          cliente={clienteSelecionado}
         />
       )}
 

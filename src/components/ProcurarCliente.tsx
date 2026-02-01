@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Hash, FileText, ArrowLeft, Scale, AlertCircle, User, Calendar, Edit2 } from 'lucide-react';
+import { Search, Hash, FileText, ArrowLeft, Scale, AlertCircle, User, Calendar } from 'lucide-react';
 import { db } from '../firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import '../style.css'; 
@@ -7,12 +7,11 @@ import '../style.css';
 interface Props {
   setEcra: (ecra: string) => void;
   onNovoCaso: (cliente: any) => void;
-  onEditarCliente: (cliente: any) => void;
+  onConsultarFicha: (cliente: any) => void; // Mudei o nome para ser mais claro
   onVerProcesso: (processo: any) => void;
 }
 
-export const ProcurarCliente: React.FC<Props> = ({ setEcra, onNovoCaso, onEditarCliente, onVerProcesso }) => {
-  // --- LÓGICA ---
+export const ProcurarCliente: React.FC<Props> = ({ setEcra, onNovoCaso, onConsultarFicha, onVerProcesso }) => {
   const [tipoPesquisa, setTipoPesquisa] = useState<'nif' | 'processo'>('nif');
   const [valorBusca, setValorBusca] = useState('');
   
@@ -47,7 +46,6 @@ export const ProcurarCliente: React.FC<Props> = ({ setEcra, onNovoCaso, onEditar
           setErro("Nenhum cliente encontrado com este NIF.");
         }
       } else {
-        // Lógica futura para pesquisa por processo
         setErro("Pesquisa por Nº de Processo em desenvolvimento.");
       }
     } catch (error) {
@@ -67,7 +65,6 @@ export const ProcurarCliente: React.FC<Props> = ({ setEcra, onNovoCaso, onEditar
   return (
     <div className="page-container">
       
-      {/* HEADER */}
       <header className="header-bar with-action">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <div className="logo-circle">
@@ -83,10 +80,8 @@ export const ProcurarCliente: React.FC<Props> = ({ setEcra, onNovoCaso, onEditar
         </button>
       </header>
 
-      {/* GRELHA PRINCIPAL */}
       <div className="search-page-grid">
         
-        {/* ESQUERDA: FORMULÁRIO */}
         <div className="search-panel">
             <div className="search-panel-header">
                 <div className="icon-circle-brown">
@@ -153,7 +148,6 @@ export const ProcurarCliente: React.FC<Props> = ({ setEcra, onNovoCaso, onEditar
             </form>
         </div>
 
-        {/* DIREITA: RESULTADOS */}
         <div className="search-panel">
             {!cliente ? (
                 <div className="empty-state">
@@ -168,14 +162,13 @@ export const ProcurarCliente: React.FC<Props> = ({ setEcra, onNovoCaso, onEditar
             ) : (
                 <div className="animate-in fade-in h-full flex flex-col">
                     <div className="result-header">
-                        <div className="flex items-center gap-4">
-                            
-                            {/* LÓGICA DA FOTO: Se tiver foto mostra, se não mostra ícone */}
+                        
+                        <div className="client-info-group">
                             {cliente.fotoPreview ? (
                                 <img 
                                     src={cliente.fotoPreview} 
                                     alt="Foto Cliente" 
-                                    className="w-16 h-16 rounded-full object-cover border border-gray-200 shadow-sm"
+                                    className="client-result-photo"
                                 />
                             ) : (
                                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
@@ -192,9 +185,12 @@ export const ProcurarCliente: React.FC<Props> = ({ setEcra, onNovoCaso, onEditar
                                 </div>
                             </div>
                         </div>
-                        <button onClick={() => onEditarCliente(cliente)} className="text-gray-400 hover:text-[#9a3412]">
-                            <Edit2 size={20} />
+                        
+                        {/* BOTÃO ATIVADO: Agora abre a ficha */}
+                        <button onClick={() => onConsultarFicha(cliente)} className="btn-consult">
+                            Consultar Ficha
                         </button>
+
                     </div>
 
                     <div className="flex-1 overflow-y-auto">

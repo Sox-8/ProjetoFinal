@@ -3,7 +3,7 @@
    ========================================= */
 .page-container {
   min-height: 100vh;
-  background-color: #fffbf7; /* Fundo "branco sujo" (bege muito claro) */
+  background-color: #fffbf7;
   display: flex;
   flex-direction: column;
   font-family: 'Inter', system-ui, sans-serif;
@@ -18,13 +18,12 @@
   gap: 0.75rem;
 }
 
-/* Header com botão à direita (usado no Registo/Pesquisa) */
 .header-bar.with-action {
   justify-content: space-between;
 }
 
 .logo-circle {
-  background-color: #9a3412; /* Castanho tijolo */
+  background-color: #9a3412;
   color: white;
   padding: 0.5rem;
   border-radius: 9999px;
@@ -65,7 +64,7 @@
 }
 
 /* =========================================
-   2. MENU PRINCIPAL (Corrige os ícones pretos)
+   2. MENU PRINCIPAL
    ========================================= */
 .main-content {
   flex: 1;
@@ -94,13 +93,12 @@
 
 .menu-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 Colunas fixas */
+  grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
   width: 100%;
   max-width: 72rem;
 }
 
-/* Responsividade */
 @media (max-width: 1024px) { .menu-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 768px) { .menu-grid { grid-template-columns: 1fr; } }
 
@@ -127,7 +125,7 @@
 .card-icon {
   width: 4rem;
   height: 4rem;
-  background-color: #9a3412; /* AQUI ESTÁ O SEGREDO DA BOLA CASTANHA */
+  background-color: #9a3412;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -169,7 +167,7 @@
 }
 
 /* =========================================
-   3. REGISTO DE CLIENTE (PASSO 1)
+   3. REGISTO DE CLIENTE
    ========================================= */
 .register-container {
   display: flex;
@@ -447,17 +445,15 @@
 
 
 /* =========================================
-   5. FORMULÁRIO DETALHADO (Passo 2 - Dados do Cliente)
+   5. FORMULÁRIO DETALHADO (Passo 2)
    ========================================= */
 
-/* Cartão mais largo para o formulário final (sobrescreve o default) */
 .register-card.wide {
   max-width: 900px;
   padding: 3rem;
-  text-align: left; /* Alinhamento dos textos à esquerda */
+  text-align: left;
 }
 
-/* Layout do Topo do Form: Título à esquerda, Foto à direita */
 .form-header-layout {
   display: flex;
   justify-content: space-between;
@@ -467,7 +463,6 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
-/* Bloco da Foto (Direita) */
 .photo-upload-container {
   display: flex;
   flex-direction: column;
@@ -486,6 +481,15 @@
   color: #9ca3af;
   background-color: #f9fafb;
   margin-bottom: 0.5rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.photo-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .btn-small-outline {
@@ -499,7 +503,6 @@
   cursor: pointer;
 }
 
-/* Títulos das Secções (Identificação, Contactos...) */
 .form-section-title {
   font-size: 1.125rem;
   font-weight: 700;
@@ -508,7 +511,6 @@
   margin-top: 2rem;
 }
 
-/* Sistema de Grelha para Inputs (1 ou 2 colunas) */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -516,23 +518,12 @@
 }
 
 @media (min-width: 768px) {
-  .form-grid {
-    grid-template-columns: 1fr 1fr; /* 2 Colunas em ecrãs grandes */
-  }
+  .form-grid { grid-template-columns: 1fr 1fr; }
 }
 
-/* Classe utilitária para inputs que ocupam a largura total */
-.col-span-2 {
-  grid-column: span 1;
-}
+.col-span-2 { grid-column: span 1; }
+@media (min-width: 768px) { .col-span-2 { grid-column: span 2; } }
 
-@media (min-width: 768px) {
-  .col-span-2 {
-    grid-column: span 2;
-  }
-}
-
-/* Linha de Botões (Cancelar e Registar) */
 .form-actions-row {
   display: flex;
   gap: 1rem;
@@ -558,15 +549,117 @@
   border-color: #9ca3af;
 }
 
-/* Garante que a imagem preenche o círculo perfeitamente */
-.photo-placeholder {
-  overflow: hidden; /* Corta o que sair fora do círculo */
-  position: relative;
+/* =========================================
+   6. RESULTADOS DA PESQUISA
+   ========================================= */
+
+.client-result-photo {
+  width: 10rem;
+  height: 10rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
+  flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.photo-placeholder img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Mantém a proporção da foto sem esticar */
-  border-radius: 50%;
+.client-info-group {
+  display: flex;
+  align-items: center;
+  gap: 4rem; 
+}
+
+.client-name {
+  font-size: 1.50rem;
+  font-weight: 760;
+  color: #111827;
+  margin: 0;
+}
+
+.client-email {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0.25rem 0 0.5rem 0;
+}
+
+.client-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.80rem;
+  color: #9ca3af;
+}
+
+.section-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.btn-link-action {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #9a3412;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.btn-link-action:hover {
+  background-color: #fff7ed;
+  text-decoration: underline;
+}
+
+.process-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #9a3412;
+  background-color: #ffedd5;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.process-number {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.process-title {
+  font-weight: 700;
+  color: #1f2937;
+  font-size: 0.9rem;
+  margin: 0.25rem 0;
+}
+
+/* NOVO: Botão Consultar Ficha */
+.btn-consult {
+  background-color: #9a3412;
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px; /* Totalmente arredondado */
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-consult:hover {
+  background-color: #7c2d12;
 }
