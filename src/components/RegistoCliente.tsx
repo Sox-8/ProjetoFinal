@@ -13,27 +13,43 @@ export const RegistoCliente: React.FC<Props> = ({ setEcra }) => {
   // --- ESTADOS ---
   const [etapa, setEtapa] = useState<'verificacao' | 'formulario'>('verificacao');
   
-  // Estado Passo 1 (Verificação)
+  // Estado Passo 1
   const [nifVerificacao, setNifVerificacao] = useState('');
   const [loadingVerificacao, setLoadingVerificacao] = useState(false);
   const [erroVerificacao, setErroVerificacao] = useState('');
 
-  // Estado Passo 2 (Formulário Detalhado)
+  // Estado Passo 2
   const [nome, setNome] = useState('');
   const [nif, setNif] = useState('');
-  const [dataNascimento, setDataNascimento] = useState(''); // NOVO
-  const [nacionalidade, setNacionalidade] = useState('Portuguesa'); // NOVO
-  
+  const [dataNascimento, setDataNascimento] = useState('');
+  const [nacionalidade, setNacionalidade] = useState('Portuguesa');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
-  
   const [morada, setMorada] = useState('');
-  const [codPostal, setCodPostal] = useState(''); // NOVO
-  const [cidade, setCidade] = useState(''); // NOVO
+  const [codPostal, setCodPostal] = useState('');
+  const [cidade, setCidade] = useState('');
+  
+  // NOVO: Estado para a foto
+  const [fotoPreview, setFotoPreview] = useState<string | null>(null);
 
   const [loadingGuardar, setLoadingGuardar] = useState(false);
 
   // --- FUNÇÕES ---
+  
+  // NOVO: Função para ler a foto selecionada
+  const handleFotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      
+      // Cria um leitor de ficheiros para converter a imagem
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFotoPreview(reader.result as string); // Guarda a imagem como texto (Base64) para preview
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const verificarNif = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nifVerificacao || nifVerificacao.length !== 9) {
@@ -76,6 +92,7 @@ export const RegistoCliente: React.FC<Props> = ({ setEcra }) => {
         morada,
         codPostal,
         cidade,
+        fotoPreview, // NOVO: Grava a foto na base de dados
         dataRegisto: Timestamp.now()
       });
       alert("Cliente registado com sucesso!");
@@ -107,7 +124,7 @@ export const RegistoCliente: React.FC<Props> = ({ setEcra }) => {
         </button>
       </header>
 
-      {/* PASSO 1: VERIFICAÇÃO NIF (Mantido igual) */}
+      {/* PASSO 1: VERIFICAÇÃO NIF */}
       {etapa === 'verificacao' && (
         <div className="register-container">
             <div className="register-card">
@@ -146,10 +163,9 @@ export const RegistoCliente: React.FC<Props> = ({ setEcra }) => {
         </div>
       )}
 
-      {/* PASSO 2: FORMULÁRIO DETALHADO (Novo Layout) */}
+      {/* PASSO 2: FORMULÁRIO DETALHADO */}
       {etapa === 'formulario' && (
         <div className="register-container">
-            {/* Usa a classe 'wide' para ficar mais largo como na imagem */}
             <div className="register-card wide">
                 
                 <form onSubmit={guardar}>
@@ -165,12 +181,35 @@ export const RegistoCliente: React.FC<Props> = ({ setEcra }) => {
                             </div>
                         </div>
 
-                        {/* Área de Upload de Foto (Visual apenas) */}
+                        {/* Área de Upload de Foto */}
                         <div className="photo-upload-container">
+                            {/* Input invisível para selecionar o ficheiro */}
+                            <input 
+                                type="file" 
+                                id="fotoInput" 
+                                accept="image/*" 
+                                onChange={handleFotoChange} 
+                                style={{ display: 'none' }} 
+                            />
+
                             <div className="photo-placeholder">
-                                <Upload size={24} />
+                                {fotoPreview ? (
+                                    // Se existir foto, mostra a imagem
+                                    <img src={fotoPreview} alt="Preview" />
+                                ) : (
+                                    // Se não, mostra o ícone de upload
+                                    <Upload size={24} />
+                                )}
                             </div>
-                            <button type="button" className="btn-small-outline">Adicionar Foto</button>
+                            
+                            {/* Botão que ativa o input invisível */}
+                            <button 
+                                type="button" 
+                                className="btn-small-outline"
+                                onClick={() => document.getElementById('fotoInput')?.click()}
+                            >
+                                {fotoPreview ? "Alterar Foto" : "Adicionar Foto"}
+                            </button>
                             <span className="text-[10px] text-gray-400">Opcional</span>
                         </div>
                     </div>
@@ -266,7 +305,7 @@ export const RegistoCliente: React.FC<Props> = ({ setEcra }) => {
                             type="submit" 
                             disabled={loadingGuardar}
                             className="btn-primary-full" 
-                            style={{ flex: 1, marginTop: 0 }} // Ajuste para ficar lado a lado
+                            style={{ flex: 1, marginTop: 0 }}
                         >
                             {loadingGuardar ? "A gravar..." : "Registar Cliente"}
                         </button>

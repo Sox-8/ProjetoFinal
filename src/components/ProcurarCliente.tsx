@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Hash, FileText, ArrowLeft, Scale, AlertCircle, User, Calendar, Edit2, Trash2 } from 'lucide-react';
+import { Search, Hash, FileText, ArrowLeft, Scale, AlertCircle, User, Calendar, Edit2 } from 'lucide-react';
 import { db } from '../firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import '../style.css'; 
@@ -12,7 +12,7 @@ interface Props {
 }
 
 export const ProcurarCliente: React.FC<Props> = ({ setEcra, onNovoCaso, onEditarCliente, onVerProcesso }) => {
-  // --- LÓGICA (Mantida igual) ---
+  // --- LÓGICA ---
   const [tipoPesquisa, setTipoPesquisa] = useState<'nif' | 'processo'>('nif');
   const [valorBusca, setValorBusca] = useState('');
   
@@ -31,7 +31,6 @@ export const ProcurarCliente: React.FC<Props> = ({ setEcra, onNovoCaso, onEditar
     setProcessos([]);
 
     try {
-      // 1. Pesquisa por NIF
       if (tipoPesquisa === 'nif') {
         const qCliente = query(collection(db, "clientes"), where("nif", "==", valorBusca));
         const querySnapshot = await getDocs(qCliente);
@@ -47,19 +46,10 @@ export const ProcurarCliente: React.FC<Props> = ({ setEcra, onNovoCaso, onEditar
         } else {
           setErro("Nenhum cliente encontrado com este NIF.");
         }
-      } 
-      // 2. Pesquisa por Processo (Lógica Extra se precisares)
-      else {
-        const qProc = query(collection(db, "processos"), where("numeroProcesso", "==", valorBusca));
-        const procSnap = await getDocs(qProc);
-        if(!procSnap.empty) {
-             // Lógica inversa: Encontrar o processo -> Encontrar o cliente (Simplificado aqui)
-             setErro("Funcionalidade de pesquisa direta por processo em desenvolvimento.");
-        } else {
-             setErro("Processo não encontrado.");
-        }
+      } else {
+        // Lógica futura para pesquisa por processo
+        setErro("Pesquisa por Nº de Processo em desenvolvimento.");
       }
-
     } catch (error) {
       console.error(error);
       setErro("Erro ao conectar à base de dados.");
@@ -77,7 +67,7 @@ export const ProcurarCliente: React.FC<Props> = ({ setEcra, onNovoCaso, onEditar
   return (
     <div className="page-container">
       
-      {/* HEADER (Igual ao Registo) */}
+      {/* HEADER */}
       <header className="header-bar with-action">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <div className="logo-circle">
@@ -93,12 +83,11 @@ export const ProcurarCliente: React.FC<Props> = ({ setEcra, onNovoCaso, onEditar
         </button>
       </header>
 
-      {/* GRELHA PRINCIPAL DA PESQUISA */}
+      {/* GRELHA PRINCIPAL */}
       <div className="search-page-grid">
         
-        {/* COLUNA DA ESQUERDA: FORMULÁRIO */}
+        {/* ESQUERDA: FORMULÁRIO */}
         <div className="search-panel">
-            
             <div className="search-panel-header">
                 <div className="icon-circle-brown">
                     <Search size={24} />
@@ -112,7 +101,6 @@ export const ProcurarCliente: React.FC<Props> = ({ setEcra, onNovoCaso, onEditar
             <form onSubmit={pesquisar}>
                 <p className="text-sm font-medium text-gray-700 mb-3">Tipo de Pesquisa</p>
                 
-                {/* Opção 1: NIF */}
                 <div 
                     className={`search-option-card ${tipoPesquisa === 'nif' ? 'active' : ''}`}
                     onClick={() => setTipoPesquisa('nif')}
@@ -124,7 +112,6 @@ export const ProcurarCliente: React.FC<Props> = ({ setEcra, onNovoCaso, onEditar
                     </div>
                 </div>
 
-                {/* Opção 2: Nº Processo */}
                 <div 
                     className={`search-option-card ${tipoPesquisa === 'processo' ? 'active' : ''}`}
                     onClick={() => setTipoPesquisa('processo')}
@@ -166,32 +153,40 @@ export const ProcurarCliente: React.FC<Props> = ({ setEcra, onNovoCaso, onEditar
             </form>
         </div>
 
-        {/* COLUNA DA DIREITA: RESULTADOS ou VAZIO */}
+        {/* DIREITA: RESULTADOS */}
         <div className="search-panel">
-            
             {!cliente ? (
-                /* ESTADO VAZIO (Igual à imagem) */
                 <div className="empty-state">
                     <div className="empty-state-icon-large">
                         <Search size={40} strokeWidth={1.5} />
                     </div>
                     <h3 className="font-bold text-gray-900 text-lg mb-2">Nenhuma pesquisa realizada</h3>
                     <p className="text-sm text-gray-500 max-w-xs">
-                        Utilize o formulário à esquerda para procurar um cliente por NIF ou número de processo.
+                        Utilize o formulário à esquerda para procurar um cliente.
                     </p>
                 </div>
             ) : (
-                /* RESULTADOS ENCONTRADOS */
                 <div className="animate-in fade-in h-full flex flex-col">
                     <div className="result-header">
                         <div className="flex items-center gap-4">
-                            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
-                                <User size={40} />
-                            </div>
+                            
+                            {/* LÓGICA DA FOTO: Se tiver foto mostra, se não mostra ícone */}
+                            {cliente.fotoPreview ? (
+                                <img 
+                                    src={cliente.fotoPreview} 
+                                    alt="Foto Cliente" 
+                                    className="w-16 h-16 rounded-full object-cover border border-gray-200 shadow-sm"
+                                />
+                            ) : (
+                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
+                                    <User size={40} />
+                                </div>
+                            )}
+
                             <div>
-                                <h2 className="text-xl font-bold text-gray-900">{cliente.nome}</h2>
-                                <p className="text-gray-500 text-sm">{cliente.email}</p>
-                                <div className="flex gap-4 mt-1 text-xs text-gray-400">
+                                <h2 className="client-name">{cliente.nome}</h2>
+                                <p className="client-email">{cliente.email}</p>
+                                <div className="client-meta">
                                     <span>NIF: {cliente.nif}</span>
                                     <span>Tel: {cliente.telefone || '-'}</span>
                                 </div>
@@ -203,11 +198,11 @@ export const ProcurarCliente: React.FC<Props> = ({ setEcra, onNovoCaso, onEditar
                     </div>
 
                     <div className="flex-1 overflow-y-auto">
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                        <div className="section-header-row">
+                            <h3 className="section-title">
                                 <Scale size={18} /> Processos Associados
                             </h3>
-                            <button onClick={() => onNovoCaso(cliente)} className="text-xs font-bold text-[#9a3412] hover:underline">
+                            <button onClick={() => onNovoCaso(cliente)} className="btn-link-action">
                                 + Novo Processo
                             </button>
                         </div>
@@ -221,12 +216,12 @@ export const ProcurarCliente: React.FC<Props> = ({ setEcra, onNovoCaso, onEditar
                                 {processos.map(proc => (
                                     <div key={proc.id} onClick={() => onVerProcesso(proc)} className="process-card-mini">
                                         <div className="flex justify-between mb-1">
-                                            <span className="text-xs font-bold text-[#9a3412] bg-orange-50 px-2 py-0.5 rounded">
+                                            <span className="process-badge">
                                                 {proc.tipo || 'Geral'}
                                             </span>
-                                            <span className="text-xs text-gray-400 font-mono">{proc.numeroProcesso}</span>
+                                            <span className="process-number">{proc.numeroProcesso}</span>
                                         </div>
-                                        <div className="font-bold text-gray-800 text-sm">{proc.natureza}</div>
+                                        <div className="process-title">{proc.natureza}</div>
                                         <div className="text-xs text-gray-400 mt-2 flex items-center gap-1">
                                             <Calendar size={12} /> {proc.dataAbertura?.toDate().toLocaleDateString('pt-PT')}
                                         </div>
